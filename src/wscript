@@ -1,0 +1,7 @@
+def build(bld):
+
+  bld.program(features = 'cxx cprogram',
+      source   = 'randcomparison.cc',
+     target   = 'randcomparison',
+#      includes = ['.', '/home/ehara/usr/local/include'],
+      )
