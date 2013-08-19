@@ -14,8 +14,23 @@ namespace{
   };
   class crand_t{
     public:
-    inline std::string name() const{ return "std::rand"; }
-    inline double      zeroonerand() const { return (((double) std::rand()-1)/((double)RAND_MAX)); } 
+    inline std::string name() const{ return "Crand raw"; }
+    inline double      zeroonerand() const { return (((double) std::rand())/((double)RAND_MAX+1)); } 
+    inline size_t      nrand(size_t n_rand) const{ return n_rand * zeroonerand();}
+    inline void        seed(int seed) { std::srand(seed); }
+  };
+  class crand_mod_t{
+    public:
+    inline std::string name() const{ return "Crand mod"; }
+    inline double      zeroonerand() const { return (((double) std::rand())/((double)RAND_MAX+1)); } 
+    inline size_t      nrand(size_t n_rand) const{ return rand() % n_rand;}
+    inline void        seed(int seed) { std::srand(seed); }
+  };
+  class crand_mult_t{
+    constexpr static double tomult = 1.0 / ((double)RAND_MAX + 1.0);
+    public:
+    inline  std::string name() const{ return "Crand mult"; }
+    inline double      zeroonerand() const { return (double)rand() * tomult; } 
     inline size_t      nrand(size_t n_rand) const{ return n_rand * zeroonerand();}
     inline void        seed(int seed) { std::srand(seed); }
   };
@@ -50,10 +65,17 @@ int main(int argc, char* argv[]){
   zeroone_caller_t zeroone_caller;
   crand_t crand;
   measure_time(&crand, zeroone_caller, n_iter,  7);
+  crand_mod_t crand_mod;
+  measure_time(&crand_mod, zeroone_caller, n_iter,  7);
+  crand_mult_t crand_mult;
+  measure_time(&crand_mult, zeroone_caller, n_iter,  7);
   mtrand_t mtrand;
   measure_time(&mtrand, zeroone_caller, n_iter, 7);
 
+  std::cout << "nrand" << std::endl;
   nrand_caller_t nrand_caller(n_rand);
   measure_time(&crand, nrand_caller, n_iter,  7);
+  measure_time(&crand_mod, nrand_caller, n_iter,  7);
+  measure_time(&crand_mult, nrand_caller, n_iter,  7);
   measure_time(&mtrand, nrand_caller, n_iter, 7);
 }
